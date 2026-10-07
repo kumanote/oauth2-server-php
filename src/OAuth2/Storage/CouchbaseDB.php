@@ -34,7 +34,7 @@ class CouchbaseDB implements AuthorizationCodeInterface,
                 throw new \InvalidArgumentException('First argument to OAuth2\Storage\CouchbaseDB must be an instance of Couchbase or a configuration array containing a server array');
             }
 
-            $this->db = new \Couchbase($connection['servers'], (!isset($connection['username'])) ? '' : $connection['username'], (!isset($connection['password'])) ? '' : $connection['password'], $connection['bucket'], false);
+            $this->db = $this->createCouchbase($connection['servers'], (!isset($connection['username'])) ? '' : $connection['username'], (!isset($connection['password'])) ? '' : $connection['password'], $connection['bucket'], false);
         }
 
         $this->config = array_merge(array(
@@ -45,6 +45,11 @@ class CouchbaseDB implements AuthorizationCodeInterface,
             'user_table' => 'oauth_users',
             'jwt_table' => 'oauth_jwt',
         ), $config);
+    }
+
+    protected function createCouchbase($servers, $username, $password, $bucket, $persistent)
+    {
+        return new \Couchbase($servers, $username, $password, $bucket, $persistent);
     }
 
     // Helper function to access couchbase item by type:
