@@ -87,15 +87,30 @@ class AuthorizationCode implements AuthorizationCodeInterface
         if (function_exists('random_bytes')) {
             $randomData = random_bytes(100);
         } elseif (function_exists('openssl_random_pseudo_bytes')) {
-            $randomData = openssl_random_pseudo_bytes(100);
+            $randomData = $this->opensslRandomPseudoBytes(100);
         } elseif (function_exists('mcrypt_create_iv')) {
             $randomData = mcrypt_create_iv(100, MCRYPT_DEV_URANDOM);
         } elseif (@file_exists('/dev/urandom')) { // Get 100 bytes of random data
-            $randomData = file_get_contents('/dev/urandom', false, null, 0, 100) . uniqid(mt_rand(), true);
+            $randomData = file_get_contents('/dev/urandom', false, null, 0, 100) . uniqid($this->mtRand(), true);
         } else {
-            $randomData = mt_rand() . mt_rand() . mt_rand() . mt_rand() . microtime(true) . uniqid(mt_rand(), true);
+            $randomData = $this->mtRand() . $this->mtRand() . $this->mtRand() . $this->mtRand() . $this->microtimeNow() . uniqid($this->mtRand(), true);
         }
 
         return substr(hash('sha512', $randomData), 0, $tokenLen);
+    }
+
+    protected function opensslRandomPseudoBytes($length)
+    {
+        return openssl_random_pseudo_bytes($length);
+    }
+
+    protected function mtRand()
+    {
+        return mt_rand();
+    }
+
+    protected function microtimeNow()
+    {
+        return microtime(true);
     }
 }
