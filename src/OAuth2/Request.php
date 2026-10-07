@@ -4,6 +4,29 @@ namespace OAuth2;
 
 use LogicException;
 
+class RequestGlobals
+{
+    public function get()
+    {
+        return $_GET;
+    }
+    public function post()
+    {
+        return $_POST;
+    }
+    public function cookie()
+    {
+        return $_COOKIE;
+    }
+    public function files()
+    {
+        return $_FILES;
+    }
+    public function server()
+    {
+        return $_SERVER;
+    }
+}
 /**
  * OAuth2\Request
  * This class is taken from the Symfony2 Framework and is part of the Symfony package.
@@ -19,6 +42,11 @@ class Request implements RequestInterface
     public $cookies;
     public $headers;
     public $content;
+    private static $globals;
+    public static function setGlobals(RequestGlobals $globals = null)
+    {
+        self::$globals = $globals;
+    }
 
     /**
      * Constructor.
@@ -226,12 +254,14 @@ class Request implements RequestInterface
      *
      * @api
      */
-    public static function createFromGlobals()
+        public static function createFromGlobals()
     {
+        if (self::$globals === null) {
+            self::$globals = new RequestGlobals();
+        }
         $class = get_called_class();
-
         /** @var Request $request */
-        $request = new $class($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER);
+        $request = new $class(self::$globals->get(), self::$globals->post(), array(), self::$globals->cookie(), self::$globals->files(), self::$globals->server());
 
         $contentType = $request->server('CONTENT_TYPE', '');
         $requestMethod = $request->server('REQUEST_METHOD', 'GET');
