@@ -75,7 +75,7 @@ class Cassandra implements AuthorizationCodeInterface,
                 'servers'  => null,
             ), $connection);
 
-            $this->cassandra = new ConnectionPool($connection['keyspace'], $connection['servers']);
+            $this->cassandra = $this->createConnectionPool($connection['keyspace'], $connection['servers']);
         }
 
         $this->config = array_merge(array(
@@ -92,6 +92,11 @@ class Cassandra implements AuthorizationCodeInterface,
             'scope_key' => 'oauth_scopes:',
             'public_key_key'  => 'oauth_public_keys:',
         ), $config);
+    }
+
+    protected function createConnectionPool($keyspace, $servers)
+    {
+        return new ConnectionPool($keyspace, $servers);
     }
 
     /**
