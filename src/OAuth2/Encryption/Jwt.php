@@ -90,7 +90,7 @@ class Jwt implements EncryptionInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    private function verifySignature($signature, $input, $key, $algo = 'HS256')
+    protected function verifySignature($signature, $input, $key, $algo = 'HS256')
     {
         // use constants when possible, for HipHop support
         switch ($algo) {
@@ -123,7 +123,7 @@ class Jwt implements EncryptionInterface
      * @return string
      * @throws Exception
      */
-    private function sign($input, $key, $algo = 'HS256')
+    protected function sign($input, $key, $algo = 'HS256')
     {
         switch ($algo) {
             case 'HS256':
@@ -156,7 +156,7 @@ class Jwt implements EncryptionInterface
      * @return mixed
      * @throws Exception
      */
-    private function generateRSASignature($input, $key, $algo)
+    protected function generateRSASignature($input, $key, $algo)
     {
         if (!openssl_sign($input, $signature, $key, $algo)) {
             throw new Exception("Unable to sign data.");
