@@ -152,7 +152,7 @@ class IdToken implements IdTokenInterface
      * @return array
      * @throws LogicException
      */
-    private function getUserIdAndAuthTime($userInfo)
+    protected function getUserIdAndAuthTime($userInfo)
     {
         $auth_time = null;
 
