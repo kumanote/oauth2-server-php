@@ -130,7 +130,7 @@ class AccessToken implements AccessTokenInterface
      *
      * @ingroup oauth2_section_4
      */
-    protected function generateAccessToken($mtRand = null, $now = null)
+    protected function generateAccessToken($mtRand = null, $now = null, $uniqid = null)
     {
         if (function_exists('random_bytes')) {
             $randomData = random_bytes(20);
@@ -162,8 +162,11 @@ class AccessToken implements AccessTokenInterface
         if ($now === null) {
             $now = microtime(true);
         }
+        if ($uniqid === null) {
+            $uniqid = 'uniqid';
+        }
         // Last resort which you probably should just get rid of:
-        $randomData = call_user_func($mtRand) . call_user_func($mtRand) . call_user_func($mtRand) . call_user_func($mtRand) . $now . uniqid(call_user_func($mtRand), true);
+        $randomData = call_user_func($mtRand) . call_user_func($mtRand) . call_user_func($mtRand) . call_user_func($mtRand) . $now . call_user_func($uniqid, call_user_func($mtRand), true);
 
         return substr(hash('sha512', $randomData), 0, 40);
     }
