@@ -128,7 +128,7 @@ class JwtBearer implements GrantTypeInterface, ClientAssertionTypeInterface
 
         // Check expiration
         if (ctype_digit($jwt['exp'])) {
-            if ($jwt['exp'] <= time()) {
+            if ($jwt['exp'] <= $this->now()) {
                 $response->setError(400, 'invalid_grant', "JWT has expired");
 
                 return null;
@@ -142,7 +142,7 @@ class JwtBearer implements GrantTypeInterface, ClientAssertionTypeInterface
         // Check the not before time
         if ($notBefore = $jwt['nbf']) {
             if (ctype_digit($notBefore)) {
-                if ($notBefore > time()) {
+                if ($notBefore > $this->now()) {
                     $response->setError(400, 'invalid_grant', "JWT cannot be used before the Not Before (nbf) time");
 
                     return null;
@@ -167,7 +167,7 @@ class JwtBearer implements GrantTypeInterface, ClientAssertionTypeInterface
             $jti = $this->storage->getJti($jwt['iss'], $jwt['sub'], $jwt['aud'], $jwt['exp'], $jwt['jti']);
 
             //Reject if jti is used and jwt is still valid (exp parameter has not expired).
-            if ($jti && $jti['expires'] > time()) {
+            if ($jti && $jti['expires'] > $this->now()) {
                 $response->setError(400, 'invalid_grant', "JSON Token Identifier (jti) has already been used");
 
                 return null;
@@ -191,9 +191,12 @@ class JwtBearer implements GrantTypeInterface, ClientAssertionTypeInterface
             return null;
         }
 
-        $this->jwt = $jwt;
-
+                $this->jwt = $jwt;
         return true;
+    }
+    protected function now()
+    {
+        return time();
     }
 
     /**
